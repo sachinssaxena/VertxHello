@@ -1,23 +1,38 @@
 package com.sachin.starter;
 
 import io.vertx.core.AbstractVerticle;
-import io.vertx.core.Promise;
+import io.vertx.core.Vertx;
+import io.vertx.core.http.HttpServer;
+import io.vertx.core.http.HttpServerResponse;
 
 public class MainVerticle extends AbstractVerticle {
 
+  public static void main(String[] args) {
+    Vertx vertx = Vertx.vertx();
+    vertx.deployVerticle(new MainVerticle());
+  }
+
   @Override
-  public void start(Promise<Void> startPromise) throws Exception {
-    vertx.createHttpServer().requestHandler(req -> {
-      req.response()
-        .putHeader("content-type", "text/plain")
-        .end("Hello from Vert.x!");
-    }).listen(8888, http -> {
-      if (http.succeeded()) {
-        startPromise.complete();
-        System.out.println("HTTP server started on port 8888");
+  public void start() {
+    HttpServer server = vertx.createHttpServer();
+
+    server.requestHandler(request -> {
+      // Check if the request path is "/hello"
+      if ("/hello".equals(request.path())) {
+        // Set content type to JSON
+        request.response().putHeader("Content-Type", "application/json");
+
+        // Write a JSON response
+        HttpServerResponse response = request.response();
+        response.end("{\"message\": \"Hello, World!\"}");
       } else {
-        startPromise.fail(http.cause());
+        // Respond with 404 Not Found for other paths
+        request.response().setStatusCode(404).end();
       }
     });
+
+    server.listen(4321); // Start the server on port 8080
+    System.out.println("Server started at http://localhost:8080/");
   }
 }
+
