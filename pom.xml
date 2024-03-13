@@ -116,6 +116,9 @@
           </execution>
         </executions>
         <configuration>
+          <agent>
+            <enabled>true</enabled>
+          </agent>
           <imageName>${project.name}</imageName>
           <mainClass>io.vertx.core.Launcher</mainClass>
           <buildArgs>-H:+PrintClassInitialization -H:+ReportExceptionStackTraces --initialize-at-run-time=io.netty.handler.ssl.BouncyCastleAlpnSslUtils</buildArgs>
